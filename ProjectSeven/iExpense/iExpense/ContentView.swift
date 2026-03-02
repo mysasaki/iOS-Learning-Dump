@@ -23,6 +23,14 @@ class Expenses: ObservableObject {
         }
     }
     
+    var personal: [ExpenseItem] {
+        items.filter { $0.type == "Personal" }
+    }
+    
+    var business: [ExpenseItem] {
+        items.filter { $0.type == "Business" }
+    }
+    
     init() {
         if let savedItems = UserDefaults.standard.data(forKey: "Items") {
             if let decoded = try? JSONDecoder().decode([ExpenseItem].self, from: savedItems) {
@@ -42,19 +50,10 @@ struct ContentView: View {
     
     var body: some View {
         NavigationStack {
+            
             List {
-                ForEach(expenses.items) { item in
-                    HStack {
-                        VStack(alignment: .leading) {
-                            Text(item.name)
-                                .font(.headline)
-                            Text(item.type)
-                        }
-                        Spacer()
-                        Text(item.amount, format: .currency(code: "BRL"))
-                    }
-                }
-                .onDelete(perform: removeItems)
+                ItemsListView(expenses: expenses, type: "Personal")
+                ItemsListView(expenses: expenses, type: "Business")
             }
             .navigationTitle("iExpense")
             .toolbar {
@@ -68,6 +67,31 @@ struct ContentView: View {
                 AddView(expenses: expenses)
             }
         }
+    }
+    
+    
+}
+
+struct ItemsListView: View {
+    @ObservedObject var expenses: Expenses
+    let type: String
+    
+    var body: some View {
+        Section(type) {
+            ForEach(type == "Business" ? expenses.business : expenses.personal) { item in
+                HStack {
+                    VStack(alignment: .leading) {
+                        Text(item.name)
+                            .font(.headline)
+                        Text(item.type)
+                    }
+                    Spacer()
+                    Text(item.amount, format: .currency(code: "BRL"))
+                }
+            }
+            .onDelete(perform: removeItems)
+        }
+        
     }
     
     func removeItems(at offsets: IndexSet) {
