@@ -25,10 +25,12 @@ struct MissionView: View {
                     .scaledToFit()
                     .frame(width: UIScreen.main.bounds.width * 0.6)
                 
-                Rectangle()
-                    .frame(height: 2)
-                    .foregroundStyle(.lightBackground)
-                    .padding(.vertical)
+                Text(mission.formattedLaunchDate)
+                    .font(.subheadline)
+                    .foregroundColor(.gray)
+                
+                    Divider()
+                    .padding(.horizontal)
                 
                 VStack(alignment: .leading) {
                     Text("Mission highlights")
@@ -37,17 +39,13 @@ struct MissionView: View {
                     
                     Text(mission.description)
                     
-                    Rectangle()
-                        .frame(height: 2)
-                        .foregroundStyle(.lightBackground)
-                        .padding(.vertical)
+                    Divider()
                     
                     Text("Crew")
                         .font(.title.bold())
                         .padding(.bottom, 5)
                 }
                 .padding(.horizontal)
-                
                 
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack {

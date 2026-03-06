@@ -18,6 +18,9 @@
 		A6DAE4992F57BB5200835E10 /* Color-Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6DAE4982F57BB5200835E10 /* Color-Theme.swift */; };
 		A6DAE49D2F58F65500835E10 /* MissionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6DAE49C2F58F65500835E10 /* MissionView.swift */; };
 		A6DAE49F2F5900ED00835E10 /* AstronautView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6DAE49E2F5900ED00835E10 /* AstronautView.swift */; };
+		A6DAE4A12F5A58FC00835E10 /* Divider.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6DAE4A02F5A58FC00835E10 /* Divider.swift */; };
+		A6DAE4A32F5A59E100835E10 /* GridLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6DAE4A22F5A59E100835E10 /* GridLayout.swift */; };
+		A6DAE4A52F5A5B7500835E10 /* ListLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6DAE4A42F5A5B7500835E10 /* ListLayout.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,6 +36,9 @@
 		A6DAE4982F57BB5200835E10 /* Color-Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color-Theme.swift"; sourceTree = "<group>"; };
 		A6DAE49C2F58F65500835E10 /* MissionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MissionView.swift; sourceTree = "<group>"; };
 		A6DAE49E2F5900ED00835E10 /* AstronautView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AstronautView.swift; sourceTree = "<group>"; };
+		A6DAE4A02F5A58FC00835E10 /* Divider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Divider.swift; sourceTree = "<group>"; };
+		A6DAE4A22F5A59E100835E10 /* GridLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridLayout.swift; sourceTree = "<group>"; };
+		A6DAE4A42F5A5B7500835E10 /* ListLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListLayout.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,6 +83,9 @@
 				A6DAE4962F57B23A00835E10 /* Mission.swift */,
 				A6DAE49C2F58F65500835E10 /* MissionView.swift */,
 				A6DAE49E2F5900ED00835E10 /* AstronautView.swift */,
+				A6DAE4A02F5A58FC00835E10 /* Divider.swift */,
+				A6DAE4A22F5A59E100835E10 /* GridLayout.swift */,
+				A6DAE4A42F5A5B7500835E10 /* ListLayout.swift */,
 			);
 			path = Moonshot;
 			sourceTree = "<group>";
@@ -162,9 +171,12 @@
 				A6DAE4932F57AE8300835E10 /* Astronaut.swift in Sources */,
 				A6DAE4992F57BB5200835E10 /* Color-Theme.swift in Sources */,
 				A6DAE49F2F5900ED00835E10 /* AstronautView.swift in Sources */,
+				A6DAE4A12F5A58FC00835E10 /* Divider.swift in Sources */,
 				A6DAE49D2F58F65500835E10 /* MissionView.swift in Sources */,
 				A6DAE4822F56581300835E10 /* ContentView.swift in Sources */,
 				A6DAE4802F56581300835E10 /* MoonshotApp.swift in Sources */,
+				A6DAE4A32F5A59E100835E10 /* GridLayout.swift in Sources */,
+				A6DAE4A52F5A5B7500835E10 /* ListLayout.swift in Sources */,
 				A6DAE4972F57B23A00835E10 /* Mission.swift in Sources */,
 				A6DAE4952F57AF0600835E10 /* Bundle-Decodable.swift in Sources */,
 			);
