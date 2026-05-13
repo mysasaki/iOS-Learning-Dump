@@ -40,6 +40,10 @@ struct DetailView: View {
             RatingView(rating: .constant(book.rating))
                 .font(.largeTitle)
             
+            Text("Added on \(book.date.formatted(.dateTime.day().month().year()))")
+                .font(.subheadline)
+                .padding()
+            
             Text(book.review)
                 .padding()
         }

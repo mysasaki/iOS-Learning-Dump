@@ -17,15 +17,18 @@ struct AddBookView: View {
     @State private var genre = "Fantasy"
     @State private var review = ""
     @State private var rating = 3
+    @State private var isShowingError = false
     
-    let genres = ["Fantasy", "Romance", "Horror", "Science Fiction", "Mystery"]
+    let genres = ["Fantasy", "Romance", "Horror", "Kids", "Mystery", "Poetry", "Thriller"]
     
     var body: some View {
         NavigationStack {
             Form {
                 Section {
                     TextField("Name of book", text: $title)
+                        .textInputAutocapitalization(.words)
                     TextField("Author", text: $author)
+                        .textInputAutocapitalization(.words)
                     
                     Picker("Genre", selection: $genre) {
                         ForEach(genres, id: \.self) {
@@ -41,6 +44,14 @@ struct AddBookView: View {
                 }
                 
                 Button("Save") {
+                    guard !title.isEmpty,
+                          !author.isEmpty,
+                          !genre.isEmpty else {
+                        
+                        isShowingError = true
+                        return
+                    }
+                    
                     let newBook = Book(title: title, author: author, genre: genre, review: review, rating: rating)
                     modelContext.insert(newBook)
                     
@@ -48,6 +59,11 @@ struct AddBookView: View {
                 }
             }
             .navigationTitle("Add Book")
+            .alert("Error", isPresented: $isShowingError) {
+                Button("Ok", role: .cancel) {}
+            } message: {
+                Text("Please insert Name, Author and Genre")
+            }
         }
     }
 }
