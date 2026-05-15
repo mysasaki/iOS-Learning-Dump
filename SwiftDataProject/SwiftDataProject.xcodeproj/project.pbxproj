@@ -6,13 +6,8 @@
 	objectVersion = 77;
 	objects = {
 
-/* Begin PBXBuildFile section */
-		73DD7BA12FB7A23400999FC5 /* Job.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73DD7BA02FB7A23400999FC5 /* Job.swift */; };
-/* End PBXBuildFile section */
-
 /* Begin PBXFileReference section */
 		730BC0A12FB6B345008691D6 /* SwiftDataProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwiftDataProject.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		73DD7BA02FB7A23400999FC5 /* Job.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Job.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -37,7 +32,6 @@
 		730BC0982FB6B345008691D6 = {
 			isa = PBXGroup;
 			children = (
-				73DD7BA02FB7A23400999FC5 /* Job.swift */,
 				730BC0A32FB6B345008691D6 /* SwiftDataProject */,
 				730BC0A22FB6B345008691D6 /* Products */,
 			);
@@ -125,7 +119,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				73DD7BA12FB7A23400999FC5 /* Job.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

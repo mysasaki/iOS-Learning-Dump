@@ -6,95 +6,53 @@
 //
 
 import SwiftUI
+import SwiftData
 
-struct ExpenseItem: Identifiable, Codable {
-    let id = UUID()
-    let name: String
-    let type: String
-    let amount: Double
-}
-
-class Expenses: ObservableObject {
-    @Published var items = [ExpenseItem]() {
-        didSet {
-            if let encoded = try? JSONEncoder().encode(items) {
-                UserDefaults.standard.set(encoded, forKey: "Items")
-            }
-        }
-    }
+struct ContentView: View {    
+    @State private var sortOrder = [SortDescriptor(\Expense.name), SortDescriptor(\Expense.amount)]
+    @State private var selectedType = "All"
     
-    var personal: [ExpenseItem] {
-        items.filter { $0.type == "Personal" }
-    }
-    
-    var business: [ExpenseItem] {
-        items.filter { $0.type == "Business" }
-    }
-    
-    init() {
-        if let savedItems = UserDefaults.standard.data(forKey: "Items") {
-            if let decoded = try? JSONDecoder().decode([ExpenseItem].self, from: savedItems) {
-                items = decoded
-                return
-            }
-        }
-        
-        items = []
-    }
-}
-
-
-struct ContentView: View {
-    @ObservedObject private var expenses = Expenses()
-    @State private var showingAddExpense = false
+    var expenseTypes = ["All", "Personal", "Business"]
     
     var body: some View {
         NavigationStack {
-            
-            List {
-                ItemsListView(expenses: expenses, type: "Personal")
-                ItemsListView(expenses: expenses, type: "Business")
-            }
+            ItemsListView(expenseType: selectedType, sortOrder: sortOrder)
             .navigationTitle("iExpense")
             .toolbar {
                 NavigationLink {
-                    AddView(expenses: expenses)
+                    AddView()
                 } label: {
                     Image(systemName: "plus")
                 }
-            }
-        }
-    }
-    
-    
-}
-
-struct ItemsListView: View {
-    @ObservedObject var expenses: Expenses
-    let type: String
-    
-    var body: some View {
-        Section(type) {
-            ForEach(type == "Business" ? expenses.business : expenses.personal) { item in
-                HStack {
-                    VStack(alignment: .leading) {
-                        Text(item.name)
-                            .font(.headline)
-                        Text(item.type)
+                
+                Menu("Filter", systemImage: "line.3.horizontal.decrease") {
+                    Picker("Expense type", selection: $selectedType) {
+                        ForEach(expenseTypes, id: \.self) {
+                            Text($0)
+                        }
                     }
-                    Spacer()
-                    Text(item.amount, format: .currency(code: "BRL"))
+                }
+                
+                Menu("Sort", systemImage: "arrow.up.arrow.down") {
+                    Picker("Sort expenses", selection: $sortOrder) {
+                        Text("Sort by Name")
+                            .tag([
+                                SortDescriptor(\Expense.name),
+                                SortDescriptor(\Expense.amount)
+                            ])
+                        
+                        Text("Sort by Amount")
+                            .tag([
+                                SortDescriptor(\Expense.amount),
+                                SortDescriptor(\Expense.name)
+                            ])
+                    }
                 }
             }
-            .onDelete(perform: removeItems)
         }
-        
-    }
-    
-    func removeItems(at offsets: IndexSet) {
-        expenses.items.remove(atOffsets: offsets)
     }
 }
+
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
