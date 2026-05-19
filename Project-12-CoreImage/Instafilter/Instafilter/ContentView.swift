@@ -14,11 +14,34 @@ import StoreKit
 struct ContentView: View {
     @State private var selectedItem: PhotosPickerItem?
     @State private var processedImage: Image?
+    @State private var inputImage: UIImage?
     @State private var showingFilters = false
+    
     @State private var filterIntensity = 0.5
+    @State private var filterRadius = 0.5
+    @State private var filterScale = 0.5
     @State private var currentFilter: CIFilter = CIFilter.sepiaTone()
     @AppStorage("filterCount") var filterCount = 0
     @Environment(\.requestReview) var requestReview
+    
+    var hasImage: Bool {
+        processedImage != nil
+    }
+    
+    var enabledIntensity: Bool {
+        let inputKeys = currentFilter.inputKeys
+        return hasImage && inputKeys.contains(kCIInputIntensityKey)
+    }
+    
+    var enabledRadius: Bool {
+        let inputKeys = currentFilter.inputKeys
+        return hasImage && inputKeys.contains(kCIInputRadiusKey)
+    }
+    
+    var enabledScale: Bool {
+        let inputKeys = currentFilter.inputKeys
+        return hasImage && inputKeys.contains(kCIInputScaleKey)
+    }
     
     let context = CIContext()
     
@@ -47,12 +70,30 @@ struct ContentView: View {
                 HStack {
                     Text("Intensity")
                     Slider(value: $filterIntensity)
+                        .disabled(!enabledIntensity)
                         .onChange(of: filterIntensity, applyProcessing)
                 }
                 .padding(.vertical)
                 
                 HStack {
+                    Text("Radius")
+                    Slider(value: $filterRadius)
+                        .disabled(!enabledRadius)
+                        .onChange(of: filterRadius, applyProcessing)
+                }
+                .padding(.vertical)
+                
+                HStack {
+                    Text("Scale")
+                    Slider(value: $filterScale)
+                        .disabled(!enabledScale)
+                        .onChange(of: filterScale, applyProcessing)
+                }
+                .padding(.vertical)
+                
+                HStack {
                     Button("Change filter", action: changeFilter)
+                        .disabled(!hasImage)
                     Spacer()
                     
                     if let processedImage {
@@ -78,22 +119,23 @@ struct ContentView: View {
     func loadImage() {
         Task {
             guard let imageData = try await selectedItem?.loadTransferable(type: Data.self) else { return }
-            guard let inputImage = UIImage(data: imageData) else { return }
+            guard let uiImage = UIImage(data: imageData) else { return }
             
-            let beginImage = CIImage(image: inputImage)
+            inputImage = uiImage
+
+            let beginImage = CIImage(image: uiImage)
             currentFilter.setValue(beginImage, forKey: kCIInputImageKey)
             applyProcessing()
         }
     }
     
     func applyProcessing() {
-        let inputKeys = currentFilter.inputKeys
         
-        if inputKeys.contains(kCIInputIntensityKey) { currentFilter.setValue(filterIntensity, forKey: kCIInputIntensityKey)}
+        if enabledIntensity { currentFilter.setValue(filterIntensity, forKey: kCIInputIntensityKey)}
         
-        if inputKeys.contains(kCIInputRadiusKey) { currentFilter.setValue(filterIntensity, forKey: kCIInputRadiusKey)}
+        if enabledRadius { currentFilter.setValue(filterRadius, forKey: kCIInputRadiusKey)}
         
-        if inputKeys.contains(kCIInputScaleKey) {currentFilter.setValue(filterIntensity, forKey: kCIInputScaleKey)}
+        if enabledScale {currentFilter.setValue(filterScale, forKey: kCIInputScaleKey)}
         
         guard let outputImage = currentFilter.outputImage else { return }
         guard let cgImage = context.createCGImage(outputImage, from: outputImage.extent) else { return }
@@ -104,7 +146,13 @@ struct ContentView: View {
     
     @MainActor func setFilter(_ filter: CIFilter) {
         currentFilter = filter
-        loadImage()
+        
+        guard let inputImage else { return }
+        
+        let beginImage = CIImage(image: inputImage)
+        currentFilter.setValue(beginImage, forKey: kCIInputImageKey)
+        
+        applyProcessing()
         
         filterCount += 1
         if filterCount >= 20 {
