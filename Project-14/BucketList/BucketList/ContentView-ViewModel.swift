@@ -16,8 +16,10 @@ extension ContentView {
         let savePath = URL.documentsDirectory.appending(path: "SavedPlaces")
         
         private(set) var locations: [Location]
+        var standardMode = false
         var selectedPlace: Location?
         var isUnlocked = false
+        var showAuthError = false
         
         init() {
             do {
@@ -67,7 +69,7 @@ extension ContentView {
                         self.isUnlocked = true
                     }
                     else {
-                        // error
+                        self.showAuthError = true
                         print(authenticationError?.localizedDescription ?? "Error")
                     }
                 }
