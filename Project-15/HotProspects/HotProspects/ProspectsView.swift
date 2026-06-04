@@ -20,7 +20,8 @@ struct ProspectsView: View {
     @Environment(\.modelContext) var modelContext
     @State private var isShowingScanner = false
     @State private var selectedProspects = Set<Prospect>()
-    
+    @Binding var sortOrder: [SortDescriptor<Prospect>]
+        
     let filter: FilterType
     var title: String {
         switch filter {
@@ -35,13 +36,24 @@ struct ProspectsView: View {
     
     var body: some View {
         NavigationStack {
-            Text("People: \(prospects.count)")
             List(prospects, selection: $selectedProspects) { prospect in
-                VStack(alignment: .leading) {
-                    Text(prospect.name)
-                        .font(.headline)
-                    Text(prospect.emailAddress)
-                        .foregroundStyle(.secondary)
+                NavigationLink {
+                    EditProspect(prospect: prospect)
+                } label: {
+                    HStack {
+                        VStack(alignment: .leading) {
+                            Text(prospect.name)
+                                .font(.headline)
+                            Text(prospect.emailAddress)
+                                .foregroundStyle(.secondary)
+                        }
+                        
+                        if filter == .none {
+                            Spacer()
+                            
+                            Image(systemName: prospect.isContacted ? "checkmark" : "xmark")
+                        }
+                    }
                 }
                 .swipeActions {
                     Button("Delete", systemImage: "trash", role: .destructive) {
@@ -79,6 +91,23 @@ struct ProspectsView: View {
                     ToolbarItem(placement: .topBarLeading) {
                         EditButton()
                     }
+                    ToolbarItem(placement: .topBarLeading) {
+                        Menu("Sort", systemImage: "arrow.up.arrow.down") {
+                            Picker("Sort", selection: $sortOrder) {
+                                Text("Sort by name")
+                                    .tag([
+                                        SortDescriptor(\Prospect.name),
+                                        SortDescriptor(\Prospect.emailAddress)
+                                    ])
+                                
+                                Text("Sort by email")
+                                    .tag([
+                                        SortDescriptor(\Prospect.emailAddress),
+                                        SortDescriptor(\Prospect.name)
+                                    ])
+                            }
+                        }
+                    }
                 }
                 .safeAreaInset(edge: .bottom) {
                     if selectedProspects.isEmpty == false {
@@ -94,14 +123,19 @@ struct ProspectsView: View {
         }
     }
     
-    init(filter: FilterType) {
+    init(filter: FilterType, sortOrder:Binding<[SortDescriptor<Prospect>]>) {
         self.filter = filter
+        self._sortOrder = sortOrder
+        
+        let showContactedOnly = filter == .contacted
+        
         if filter != .none {
-            let showContactedOnly = filter == .contacted
-            
             _prospects = Query(filter: #Predicate {
                 $0.isContacted == showContactedOnly
-            }, sort: [SortDescriptor(\Prospect.name)])
+            }, sort: sortOrder.wrappedValue)
+        }
+        else {
+            _prospects = Query(sort: sortOrder.wrappedValue)
         }
     }
     
@@ -164,5 +198,8 @@ struct ProspectsView: View {
 }
 
 #Preview {
-    ProspectsView(filter: .none)
+    ProspectsView(filter: .none, sortOrder: .constant([
+        SortDescriptor(\Prospect.name),
+        SortDescriptor(\Prospect.emailAddress)
+    ]))
 }
