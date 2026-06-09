@@ -12,10 +12,11 @@ struct CardView: View {
     @Environment(\.accessibilityVoiceOverEnabled) var accessibilityVoiceOverEnabled
     
     let card: Card
-    var removal: (() -> Void)? = nil
+    var removal: ((Bool) -> Void)? = nil
     
     @State private var isShowingAnswer = false
     @State private var offset = CGSize.zero
+    @State private var dragColor: Color = .white
     
     var body: some View {
         ZStack {
@@ -30,7 +31,7 @@ struct CardView: View {
                     accessibilityDifferentiateWithoutColor
                     ? nil
                     : RoundedRectangle(cornerRadius: 25)
-                        .fill(offset.width > 0 ? .green : .red)
+                        .fill(dragColor)
                 )
                 .shadow(radius: 10)
             
@@ -64,13 +65,20 @@ struct CardView: View {
             DragGesture()
                 .onChanged { gesture in
                     offset = gesture.translation
+                    dragColor = offset.width > 0 ? .green : .red
                 }
                 .onEnded { _ in
-                    if abs(offset.width) > 100 {
-                        removal?()
-                    }
-                    else {
+                    if offset.width > 100 {
+                        removal?(true)
+                    } else if offset.width < -100 {
+                        withAnimation(.easeOut) {
+                            offset = CGSize(width: -500, height: 0)
+                            dragColor = .white
+                        }
+                        removal?(false)
+                    } else {
                         offset = .zero
+                        dragColor = .white
                     }
                 }
         )
