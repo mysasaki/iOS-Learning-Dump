@@ -13,6 +13,8 @@ struct ContentView: View {
     @Environment(\.accessibilityDifferentiateWithoutColor) var accessibilityDifferentiateWithoutColor
     @Environment(\.accessibilityVoiceOverEnabled) var accessibilityVoiceOverEnabled
     
+    let url = URL.documentsDirectory.appending(path:"cards.txt")
+
     @State private var cards = [Card]()
     @State private var timeRemaining = 10
     @State private var isActive = true
@@ -175,10 +177,12 @@ struct ContentView: View {
     }
     
     func loadCards() {
-        if let data = UserDefaults.standard.data(forKey: "Cards") {
-            if let decoded = try? JSONDecoder().decode([Card].self, from: data) {
-                cards = decoded
-            }
+        do {
+            let data = try Data(contentsOf: url)
+            cards = try JSONDecoder().decode([Card].self, from: data)
+        }
+        catch {
+            print("Unable to load data: \(error.localizedDescription)")
         }
     }
 }

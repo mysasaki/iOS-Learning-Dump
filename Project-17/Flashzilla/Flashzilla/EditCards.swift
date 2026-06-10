@@ -10,6 +10,8 @@ import SwiftUI
 struct EditCards: View {
     @Environment(\.dismiss) var dismiss
     
+    let url = URL.documentsDirectory.appending(path:"cards.txt")
+    
     @State private var cards = [Card]()
     @State private var newPrompt = ""
     @State private var newAnswer = ""
@@ -48,16 +50,22 @@ struct EditCards: View {
     }
     
     func loadData() {
-        if let data = UserDefaults.standard.data(forKey: "Cards") {
-            if let decoded = try? JSONDecoder().decode([Card].self, from: data) {
-                cards = decoded
-            }
+        do {
+            let data = try Data(contentsOf: url)
+            cards = try JSONDecoder().decode([Card].self, from: data)
+        }
+        catch {
+            print("Unable to load data: \(error.localizedDescription)")
         }
     }
     
     func saveData() {
-        if let data = try? JSONEncoder().encode(cards) {
-            UserDefaults.standard.set(data, forKey: "Cards")
+        do {
+            let data = try JSONEncoder().encode(cards)
+            try data.write(to: url, options: [.atomic])
+        }
+        catch {
+            print("Unable to save data: \(error.localizedDescription)")
         }
     }
     
